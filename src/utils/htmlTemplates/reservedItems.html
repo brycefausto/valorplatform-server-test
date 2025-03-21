@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <style>
+          .item-table {
+            border: 1px solid darkgray;
+          }
+          .item-table th {
+            padding: 2px;
+          }
+          .item-table td {
+            padding: 2px;
+          }
+        </style>
+    </head>
+    <body>
+      <h1>Borrow Items Reservation</h1>
+      <p>Hi {{name}}, The user: {{usersName}} has reserved the following items.</p>
+      <table class="item-table">
+        <tr>
+          <th>Item:</th>
+          <th>Size:</th>
+          <th>Quantity:</th>
+        </tr>
+        {{#each items}}
+          <td>{{name}}</td>
+          <td>{{size}}</td>
+          <td>{{quantity}}</td>
+        {{/each}}
+      </table>
+    </body>
+</html>

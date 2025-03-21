@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <style>
+          .item-table {
+            border: 1px solid darkgray;
+          }
+          .item-table th {
+            padding: 2px;
+          }
+          .item-table td {
+            padding: 2px;
+          }
+        </style>
+    </head>
+    <body>
+      <h1>Approved Transaction</h1>
+      <p>Hi {{name}}, Your transaction has been approved by {{adminName}} with the following items.</p>
+      <table class="item-table">
+        <tr>
+          <th>Item:</th>
+          <th>Size:</th>
+          <th>Quantity:</th>
+        </tr>
+        {{#each items}}
+          <td>{{name}}</td>
+          <td>{{size}}</td>
+          <td>{{quantity}}</td>
+        {{/each}}
+      </table>
+    </body>
+</html>
