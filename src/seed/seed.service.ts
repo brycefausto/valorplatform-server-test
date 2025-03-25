@@ -8,6 +8,7 @@ import { createUserData } from './users.seed';
 import { createItemData } from './items.seed';
 import { ItemsService } from '@/items/items.service';
 import { InventoryDocument, InventoryItem } from '@/schemas/inventory.schema';
+import { ENV } from '@/constants';
 
 @Injectable()
 export class SeedService implements OnModuleInit {
@@ -22,9 +23,11 @@ export class SeedService implements OnModuleInit {
 
   async onModuleInit() {
     // await createIDCounterData(this.idCounterModel);
-    await createUserData(this.appUserModel);
-    await createItemData(this.itemModel, this.appUserModel, this.inventoryModel);
-    await this.migrateItems();
+    if (ENV !== "production") {
+      await createUserData(this.appUserModel);
+      await createItemData(this.itemModel, this.appUserModel, this.inventoryModel);
+      await this.migrateItems();
+    }
   }
 
   async migrateItems() {
