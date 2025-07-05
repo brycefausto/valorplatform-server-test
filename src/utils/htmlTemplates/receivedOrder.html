@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Order Confirmation</title>
+    <style type="text/css">
+        /* Client-specific Styles & Reset */
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        table {
+            border-spacing: 0;
+        }
+
+        img {
+            border: 0;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+            -ms-interpolation-mode: bicubic;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* General Styles */
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #333333;
+            background-color: #f4f4f4;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            background-color: #155dfc;
+            /* Updated primary color */
+            padding: 30px 20px;
+            text-align: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 28px;
+            line-height: 1.2;
+        }
+
+        .logo {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .content-section {
+            padding: 20px 30px;
+            text-align: left;
+        }
+
+        .content-section h2 {
+            color: #155dfc;
+            /* Updated primary color */
+            font-size: 22px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eeeeee;
+            padding-bottom: 10px;
+        }
+
+        .content-section p {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #555555;
+        }
+
+        .order-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .order-summary-table th,
+        .order-summary-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eeeeee;
+            text-align: left;
+            font-size: 15px;
+        }
+
+        .order-summary-table th {
+            background-color: #f8f8f8;
+            color: #155dfc;
+            /* Updated primary color */
+            font-weight: bold;
+        }
+
+        .order-summary-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .totals-table td {
+            padding: 8px 0;
+            font-size: 16px;
+            color: #555555;
+        }
+
+        .totals-table .label {
+            text-align: right;
+            padding-right: 15px;
+        }
+
+        .totals-table .value {
+            text-align: right;
+            font-weight: bold;
+            color: #333333;
+        }
+
+        .totals-table .grand-total .label,
+        .totals-table .grand-total .value {
+            font-size: 18px;
+            color: #155dfc;
+            /* Updated primary color */
+        }
+
+        .address-box {
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .address-box p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .font-bold {
+            font-weight: bold;
+        }
+
+        .footer {
+            background-color: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #777777;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .footer p {
+            margin: 0 0 10px 0;
+        }
+
+        .footer a {
+            color: #155dfc;
+            /* Updated primary color */
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments */
+        @media only screen and (max-width: 620px) {
+            .container {
+                width: 100% !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+
+            .content-section {
+                padding: 15px 20px !important;
+            }
+
+            .header {
+                padding: 20px 15px !important;
+            }
+
+            .header h1 {
+                font-size: 24px !important;
+            }
+
+            .order-summary-table th,
+            .order-summary-table td {
+                padding: 10px !important;
+            }
+
+            .address-box {
+                padding: 10px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <img src={{logo}} alt="Valor Logo" class="logo">
+            <h1>Thank You for Your Order!</h1>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="content-section">
+            <p>Dear Valued Customer, {{customer}}</p>
+            <p>Thank you for your recent purchase from {{company}}. We're excited to confirm that your order has been
+                received and is being processed.</p>
+
+            <h2>Order Details</h2>
+            <p><strong>Order Number:</strong> #{{orderId}}</p>
+            <p><strong>Order Date:</strong> {{orderDate}}</p>
+            <p><strong>Estimated Delivery:</strong> {{estimatedDeliveryDate}}</p>
+
+            <h3>Items Ordered</h3>
+            <table class="order-summary-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each items}}
+                    <tr>
+                        <td><strong>{{name}}</strong></td>
+                        <td>{{quantity}}</td>
+                        <td>{{price}}</td>
+                        <td>{{total}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+
+            <table class="totals-table">
+                <tr>
+                    <td class="label">Subtotal:</td>
+                    <td class="value">{{subtotal}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Shipping:</td>
+                    <td class="value">{{shipping}}</td>
+                </tr>
+                <tr class="grand-total">
+                    <td class="label">Grand Total:</td>
+                    <td class="value">{{total}}</td>
+                </tr>
+            </table>
+
+            <h2>Shipping Address</h2>
+            <div class="address-box">
+                {{#with shippingAddress}}
+                <p><span className="font-bold">Address: {{address}}</span></p>
+                {{#if address2}}
+                <p><span className="font-bold">Address 2: {{address2}}</span></p>
+                {{/if}}
+                <p><span className="font-bold">City: </span>{{city}}</p>
+                <p><span className="font-bold">State: </span>{{state}}</p>
+                <p><span className="font-bold">ZipCode: </span>{{zipCode}}</p>
+                {{/with}}
+            </div>
+
+            {{#if billingAddress}}
+            <h2>Billing Address</h2>
+            <div class="address-box">
+                {{#with billingAddress}}
+                <p><span className="font-bold">Address: {{address}}</span></p>
+                {{#if address2}}
+                <p><span className="font-bold">Address 2: {{address2}}</span></p>
+                {{/if}}
+                <p><span className="font-bold">City: </span>{{city}}</p>
+                <p><span className="font-bold">State: </span>{{state}}</p>
+                <p><span className="font-bold">ZipCode: </span>{{zipCode}}</p>
+                {{/with}}
+            </div>
+            {{/if}}
+
+            {{#if bankAccounts}}
+            <!-- Bank Transfer Details Section -->
+            <h2>Bank Transfer Details</h2>
+            <div class="address-box">
+                <p>Please make your payment to the following bank account/s:</p>
+                {{#each bankAccounts}}
+                <div class="address-box">
+                    <p><strong>Bank Name:</strong> {{bank}}</p>
+                    <p><strong>Account Name:</strong> {{accountHolder}}</p>
+                    <p><strong>Account Number:</strong> {{accountNumber}}</p>
+                    <p><strong>SWIFT/BIC Code:</strong> {{swiftCode}}</p>
+                </div>
+                {{/each}}
+                <p>Please include your order number (#{{orderId}}) as the payment reference.</p>
+                <p>Your order will be processed once payment is confirmed.</p>
+            </div>
+            {{/if}}
+        </div>
+
+        <p>We will send you another email with tracking information once your order has shipped.</p>
+        <p>If you have any questions, please don't hesitate to contact our customer support team at <a
+                href="mailto:{{companyEmail}}">{{companyEmail}}</a>.</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Thank you for choosing {{company}}.</p>
+        <p>&copy; {{copyrightYear}} {{company}}. All rights reserved.</p>
+    </div>
+    </div>
+</body>
+
+</html>

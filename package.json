@@ -34,6 +34,8 @@
     "@nestjs/websockets": "^11.0.11",
     "bcryptjs": "^3.0.2",
     "carbone": "^3.5.6",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
     "dotenv": "^16.4.7",
     "firebase-admin": "^13.1.0",
     "handlebars": "^4.7.8",
@@ -112,5 +114,6 @@
       "protobufjs",
       "sqlite3"
     ]
-  }
+  },
+  "packageManager": "pnpm@10.8.1+sha256.d8b2ebbc65cf02c349eca6b45c9640b910f16b6adebdb7b926e9db440e47cac7"
 }

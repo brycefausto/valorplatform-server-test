@@ -117,7 +117,7 @@ export class EventsGateway
     this.logger.log(`Message received from client id: ${client.id}`);
     this.logger.log(`Scanned item id: ${data}`);
 
-    this.io.to(data.userId).emit('scanItem', data.codeData);
+    this.io.to(data.userId.toString()).emit('scanItem', data.codeData);
     return data;
   }
 

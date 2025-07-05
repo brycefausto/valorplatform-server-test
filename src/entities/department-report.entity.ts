@@ -8,7 +8,7 @@ import {
 @Entity()
 export class DepartmentReport {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
   departmentId: string;

@@ -1,31 +1,38 @@
+import { ENV } from '@/constants';
+import { ProductsService } from '@/products/products.service';
 import { AppUser, AppUserDocument } from '@/schemas/appuser.schema';
-import { IDCounter, IDCounterDocument } from '@/schemas/id-counter.schema';
-import { Item, ItemDocument } from '@/schemas/item.schema';
+import { Company, CompanyDocument } from '@/schemas/company.schema';
+import { Inventory, InventoryDocument } from '@/schemas/inventory.schema';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { createUserData } from './users.seed';
-import { createItemData } from './items.seed';
-import { ItemsService } from '@/items/items.service';
-import { InventoryDocument, InventoryItem } from '@/schemas/inventory.schema';
-import { ENV } from '@/constants';
+import { createCompanyData } from './company.seed';
+import { createProductsData } from './product.seed';
+import { createSuperAdminData, createUserData } from './users.seed';
+import { WarehouseLocation, WarehouseLocationDocument } from '@/schemas/warehouse-location.schema';
 
 @Injectable()
 export class SeedService implements OnModuleInit {
   constructor(
+    @InjectModel(Company.name) private companyModel: Model<CompanyDocument>,
     @InjectModel(AppUser.name) private appUserModel: Model<AppUserDocument>,
-    @InjectModel(Item.name) private itemModel: Model<ItemDocument>,
-    @InjectModel(IDCounter.name)
-    private idCounterModel: Model<IDCounterDocument>,
-    @InjectModel(InventoryItem.name)
+    @InjectModel(Inventory.name)
     private inventoryModel: Model<InventoryDocument>,
+    @InjectModel(WarehouseLocation.name)
+    private locationModel: Model<WarehouseLocationDocument>,
+    private productsService: ProductsService,
   ) {}
 
   async onModuleInit() {
-    // await createIDCounterData(this.idCounterModel);
-    if (ENV !== "production") {
-      await createUserData(this.appUserModel);
-      await createItemData(this.itemModel, this.appUserModel, this.inventoryModel);
+    await createSuperAdminData(this.appUserModel);
+    if (ENV !== 'production') {
+      const company = await createCompanyData(this.companyModel, this.locationModel);
+      await createUserData(this.appUserModel, company);
+      await createProductsData(
+        this.productsService,
+        this.appUserModel,
+        company,
+      );
       await this.migrateItems();
     }
   }

@@ -9,14 +9,16 @@ import { AuthModule } from './auth/auth.module';
 import configuration from './config/configuration';
 import { DatabaseModule } from './database/database.module';
 import { EventsModule } from './events/events.module';
-import { ItemsModule } from './items/items.module';
 import { AppLoggerMiddleware } from './logger/logger.middleware';
-import { MessagingModule } from './messaging/messaging.module';
 import { RolesGuard } from './roles/roles.guard';
 import { UsersModule } from './users/users.module';
 import { SeedModule } from './seed/seed.module';
 import { TasksModule } from './tasks/tasks.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { ProductsModule } from './products/products.module';
+import { CompaniesModule } from './companies/companies.module';
+import { OrdersModule } from './orders/orders.module';
+import { BankAccountsModule } from './bank-accounts/bank-accounts.module';
 
 @Module({
   imports: [
@@ -29,11 +31,13 @@ import { InventoryModule } from './inventory/inventory.module';
     UsersModule,
     AuthModule,
     EventsModule,
-    ItemsModule,
     SeedModule,
     TasksModule,
-    MessagingModule,
     InventoryModule,
+    ProductsModule,
+    CompaniesModule,
+    OrdersModule,
+    BankAccountsModule,
   ],
   controllers: [AppController],
   providers: [

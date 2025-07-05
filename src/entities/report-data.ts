@@ -16,7 +16,7 @@ export enum ReportType {
 @Entity()
 export class ReportData {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
   type: ReportType;

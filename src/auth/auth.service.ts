@@ -1,5 +1,5 @@
 import { BASE_URL } from '@/constants';
-import { AppUserDocument, UserRole } from '@/schemas/appuser.schema';
+import { AppUserDocument } from '@/schemas/appuser.schema';
 import { UsersService } from '@/users/users.service';
 import {
   requestResetPasswordTemplate,
@@ -10,11 +10,11 @@ import { comparePassword } from '@/utils/password.utils';
 import {
   Injectable,
   NotFoundException,
-  UnauthorizedException
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './auth.constants';
-import { ResetPasswordDto } from './auth.dto';
+import { ResetPasswordDto, UserPayload } from './auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -24,10 +24,11 @@ export class AuthService {
   ) {}
 
   async signUser(user: AppUserDocument) {
-    const payload = {
-      _id: user._id.toString(),
+    const payload: UserPayload = {
+      id: user.id,
       email: user.email,
-      role: UserRole,
+      role: user.role,
+      company: user.company
     };
     const token = await this.jwtService.signAsync(payload);
 
@@ -54,7 +55,12 @@ export class AuthService {
       throw new NotFoundException('User not found.');
     }
 
-    const payload = { _id: user._id.toString(), email: user.email };
+    const payload: UserPayload = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      company: user.company
+    };
     const token = await this.jwtService.signAsync(payload, {
       expiresIn: '1h',
       secret: jwtConstants.secret,
@@ -73,7 +79,7 @@ export class AuthService {
 
   async verifyToken(token: string) {
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
+      const payload: UserPayload = await this.jwtService.verifyAsync(token, {
         secret: jwtConstants.secret,
       });
 
@@ -92,7 +98,7 @@ export class AuthService {
 
     const payload = await this.verifyToken(token);
 
-    if (payload._id != user.id) {
+    if (payload.id != user.id) {
       throw new Error('Invalid Token');
     }
 

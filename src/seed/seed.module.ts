@@ -1,20 +1,18 @@
+import { ProductsModule } from '@/products/products.module';
 import { AppUserSchemaModule } from '@/schemas/appuser.schema';
-import { IDCounterSchemaModule } from '@/schemas/id-counter.schema';
-import { ItemSchemaModule } from '@/schemas/item.schema';
-import { TransactionSchemaModule } from '@/schemas/transaction.schema';
-import { TransactionItemSchemaModule } from '@/schemas/transactionitem.schema';
+import { CompanySchemaModule } from '@/schemas/company.schema';
+import { InventorySchemaModule } from '@/schemas/inventory.schema';
+import { WarehouseLocationSchemaModule } from '@/schemas/warehouse-location.schema';
 import { Module } from '@nestjs/common';
 import { SeedService } from './seed.service';
-import { InventorySchemaModule } from '@/schemas/inventory.schema';
 
 @Module({
   imports: [
+    CompanySchemaModule,
     AppUserSchemaModule,
-    ItemSchemaModule,
-    TransactionSchemaModule,
-    TransactionItemSchemaModule,
-    IDCounterSchemaModule,
     InventorySchemaModule,
+    ProductsModule,
+    WarehouseLocationSchemaModule,
   ],
   providers: [SeedService],
 })

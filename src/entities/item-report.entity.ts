@@ -8,7 +8,7 @@ import {
 @Entity()
 export class ItemReport {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
   itemId: string;

@@ -7,26 +7,30 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import {
-  CreateInventoryItemDto,
+  CreateInventoryDto,
   InventoryQueryParams,
-  UpdateInventoryItemDto,
+  UpdateInventoryDto,
 } from './inventory.dto';
+import { AuthGuard } from '@/auth/auth.guard';
 
 @Controller('inventory')
 export class InventoryController {
   constructor(private inventoryService: InventoryService) {}
 
   @Post()
-  async create(@Body() createDto: CreateInventoryItemDto) {
-    await this.inventoryService.create(createDto);
+  @UseGuards(AuthGuard)
+  async create(@Body() createDto: CreateInventoryDto) {
+    return await this.inventoryService.create(createDto);
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateDto: UpdateInventoryItemDto) {
-    await this.inventoryService.update(id, updateDto);
+  @UseGuards(AuthGuard)
+  async update(@Param('id') id: string, @Body() updateDto: UpdateInventoryDto) {
+    return await this.inventoryService.update(id, updateDto);
   }
 
   @Get()
@@ -35,8 +39,13 @@ export class InventoryController {
   }
 
   @Get('search')
-  async search(@Query('q') q: string) {
-    return this.inventoryService.search(q);
+  async search(@Query('q') q: string, @Query('companyId') companyId: string) {
+    return this.inventoryService.search(q, companyId);
+  }
+
+  @Get('count')
+  async count(@Query('companyId') companyId: string, @Query('vendorId') vendorId?: string) {
+    return this.inventoryService.count(companyId, vendorId);
   }
 
   @Get('countReport')
@@ -50,6 +59,7 @@ export class InventoryController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   async delete(@Param('id') id: string) {
     this.inventoryService.delete(id);
   }

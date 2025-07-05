@@ -1,18 +1,29 @@
 import { AppUserSchemaModule } from '@/schemas/appuser.schema';
 import { InventorySchemaModule } from '@/schemas/inventory.schema';
-import { ItemSchemaModule } from '@/schemas/item.schema';
 import { Module } from '@nestjs/common';
 import { InventoryController } from './inventory.controller';
 import { InventoryService } from './inventory.service';
+import { ProductSchemaModule } from '@/schemas/product.schema';
+import { ProductVariantSchemaModule } from '@/schemas/product-variant.schema';
+import { WarehouseLocationSchemaModule } from '@/schemas/warehouse-location.schema';
 
 @Module({
   imports: [
     InventorySchemaModule,
-    ItemSchemaModule,
+    ProductSchemaModule,
+    ProductVariantSchemaModule,
     AppUserSchemaModule,
+    WarehouseLocationSchemaModule,
   ],
   providers: [InventoryService],
   controllers: [InventoryController],
-  exports: [InventoryService, InventorySchemaModule, ItemSchemaModule, AppUserSchemaModule],
+  exports: [
+    InventoryService,
+    InventorySchemaModule,
+    ProductSchemaModule,
+    ProductVariantSchemaModule,
+    AppUserSchemaModule,
+    WarehouseLocationSchemaModule,
+  ],
 })
 export class InventoryModule {}

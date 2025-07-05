@@ -8,7 +8,7 @@ import {
 @Entity()
 export class ItemCountReport {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: string;
 
   @Column()
   category: string;

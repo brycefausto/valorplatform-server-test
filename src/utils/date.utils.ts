@@ -16,6 +16,12 @@ export const toDateTime = (date: Date) => {
   return DateTime.fromJSDate(date).setZone(DEFAULT_TIMEZONE);
 };
 
+export const toDateString = (date: Date) => {
+  return DateTime.fromJSDate(date)
+    .setZone(DEFAULT_TIMEZONE)
+    .toFormat(DATE_FORMAT);
+};
+
 export const toDateTimeString = (date: Date) => {
   return DateTime.fromJSDate(date)
     .setZone(DEFAULT_TIMEZONE)

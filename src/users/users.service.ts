@@ -18,18 +18,23 @@ import { omit } from 'lodash';
 import { PaginateModel } from 'mongoose';
 import {
   CreateUserDto,
+  UpdateImageDto,
   UpdatePasswordAdminDto,
   UpdatePasswordDto,
   UpdateUserDto,
   UserDto,
   UserQueryParams,
 } from './users.dto';
+import { Company, CompanyDocument } from '@/schemas/company.schema';
+import { UserPayload } from '@/auth/auth.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(AppUser.name)
     private appUserModel: PaginateModel<AppUserDocument>,
+    @InjectModel(Company.name)
+    private companyModel: PaginateModel<CompanyDocument>,
     private eventEmitter: EventEmitter2,
   ) {}
 
@@ -51,9 +56,14 @@ export class UsersService {
       throw new ConflictException('The email/ID Number already exists.');
     }
 
-    const appUser = new this.appUserModel(
-      omit(createDto, ['sectionId', 'departmentId', 'subjectIds']),
-    );
+    const appUser = new this.appUserModel(omit(createDto, ['companyId']));
+
+    if (createDto.companyId) {
+      const company = await this.companyModel.findById(createDto.companyId);
+      if (company) {
+        appUser.company = company;
+      }
+    }
 
     const newUser = (await appUser.save()) as UserDto;
 
@@ -63,6 +73,11 @@ export class UsersService {
     });
 
     return newUser;
+  }
+
+  async createCustomer(createDto: CreateUserDto) {
+    createDto.role = UserRole.CUSTOMER;
+    return this.create(createDto);
   }
 
   async update(id: string, updateDto: UpdateUserDto) {
@@ -83,11 +98,34 @@ export class UsersService {
       throw new ConflictException('The email/email/ID Number already exists.');
     }
 
-    appUser.set(omit(updateDto, ['sectionId', 'subjectIds']));
+    appUser.set(omit(updateDto, ['sectionId', 'subjectIds', 'companyId']));
+
+    if (updateDto.companyId) {
+      const company = await this.companyModel.findById(updateDto.companyId);
+
+      if (company) {
+        appUser.company = company;
+      }
+    }
 
     const newUser = (await appUser.save()) as UserDto;
 
     return newUser;
+  }
+
+  async updateImage(id: string, updateImageDto: UpdateImageDto) {
+    const { image } = updateImageDto;
+    if (!image) {
+      throw new BadRequestException('Image is required.');
+    }
+    const appUser = await this.appUserModel.findById(id).exec();
+
+    if (!appUser) {
+      throw new NotFoundException('User not found.');
+    }
+
+    appUser.image = image;
+    await appUser.save();
   }
 
   async updatePassword(
@@ -134,13 +172,19 @@ export class UsersService {
     }
   }
 
-  async findAll(queryParams: UserQueryParams) {
+  async findAll(queryParams: UserQueryParams, user: UserPayload) {
+    const company = user.role != UserRole.SUPER_ADMIN ? user.company : null;
     const { page, limit = 10, search } = queryParams;
     let query = {};
+
+    if (company) {
+      query = { company };
+    }
 
     if (search) {
       const searchRegex = { $regex: search, $options: 'i' };
       query = {
+        ...query,
         $or: [{ name: searchRegex }, { email: searchRegex }],
       };
     }
@@ -148,7 +192,6 @@ export class UsersService {
     return await this.appUserModel.paginate(query, {
       page,
       limit,
-      select: '-password',
     });
   }
 
@@ -196,7 +239,10 @@ export class UsersService {
 
   async findByEmail(email: string) {
     const emailRegex = { $regex: `^${email}$`, $options: 'i' };
-    return this.appUserModel.findOne({ email: emailRegex }).exec();
+    return this.appUserModel
+      .findOne({ email: emailRegex })
+      .select('+password')
+      .exec();
   }
 
   async findByAdminRole() {

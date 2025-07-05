@@ -1,4 +1,4 @@
-import { APP_NAME, MAIL_PASSWORD, MAIL_USER } from '@/constants';
+import { APP_NAME, MAIL_DISABLED, MAIL_PASSWORD, MAIL_USER } from '@/constants';
 import { Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { compileTemplate } from './template.utils';
@@ -19,6 +19,7 @@ export const registeredAccountTemplate = 'registeredAccount.html';
 export const requestResetPasswordTemplate = 'requestResetPassword.html';
 export const resetPasswordTemplate = 'resetPassword.html';
 export const deletedAccountTemplate = 'deletedAccount.html';
+export const receivedOrderTemplate = 'receivedOrder.html';
 
 export const sendMail = async (
   toEmail: string,
@@ -26,17 +27,20 @@ export const sendMail = async (
   template: string,
   payload: any,
 ) => {
-  const mailOptions = {
-    from: mailFrom,
-    to: toEmail,
-    subject,
-    html: compileTemplate(template, { appName: APP_NAME, ...payload }),
-  };
+  if (!MAIL_DISABLED) {
+    const copyrightYear = (new Date()).getFullYear()
+    const mailOptions = {
+      from: mailFrom,
+      to: toEmail,
+      subject,
+      html: compileTemplate(template, { appName: APP_NAME, ...payload, copyrightYear }),
+    };
 
-  try {
-    const info = await transporter.sendMail(mailOptions);
-    logger.log('Email sent: ' + info.response);
-  } catch (error) {
-    logger.error(error);
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      logger.log('Email sent: ' + info.response);
+    } catch (error) {
+      logger.error(error);
+    }
   }
 };
