@@ -19,6 +19,7 @@ import { ProductsModule } from './products/products.module';
 import { CompaniesModule } from './companies/companies.module';
 import { OrdersModule } from './orders/orders.module';
 import { BankAccountsModule } from './bank-accounts/bank-accounts.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { BankAccountsModule } from './bank-accounts/bank-accounts.module';
     CompaniesModule,
     OrdersModule,
     BankAccountsModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [

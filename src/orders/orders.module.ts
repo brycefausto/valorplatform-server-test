@@ -25,5 +25,6 @@ import { BankAccountSchemaModule } from '@/schemas/bank-account.schema';
   ],
   providers: [OrdersService],
   controllers: [OrdersController],
+  exports: [OrdersService]
 })
 export class OrdersModule {}

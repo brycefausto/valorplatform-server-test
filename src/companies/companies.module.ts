@@ -9,5 +9,6 @@ import { WarehouseLocationSchemaModule } from '@/schemas/warehouse-location.sche
   imports: [CompanySchemaModule, UsersModule, WarehouseLocationSchemaModule],
   providers: [CompaniesService],
   controllers: [CompaniesController],
+  exports: [CompaniesService]
 })
 export class CompaniesModule {}

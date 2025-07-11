@@ -2,10 +2,9 @@ import { EventsModule } from '@/events/events.module';
 import { EventsService } from '@/events/events.service';
 import { addSchemaPostHooks } from '@/utils/schema.utils';
 import { MongooseModule, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import * as mongoosePaginate from 'mongoose-paginate-v2';
 import { WithTimestamps } from '.';
-import { Product } from './product.schema';
 
 export type ProductVariantDocument = HydratedDocument<ProductVariant> &
   WithTimestamps;
@@ -25,11 +24,8 @@ export class ProductVariant {
   @Prop({ required: true })
   sku: string;
 
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product',
-  })
-  product?: Product;
+  @Prop()
+  productId: string;
 
   @Prop()
   description: string;

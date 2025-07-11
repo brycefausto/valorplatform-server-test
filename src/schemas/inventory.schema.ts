@@ -8,6 +8,7 @@ import { WithTimestamps } from '.';
 import { AppUser } from './appuser.schema';
 import { Company } from './company.schema';
 import { ProductVariant } from './product-variant.schema';
+import { Product } from './product.schema';
 import { WarehouseLocation } from './warehouse-location.schema';
 
 export type InventoryDocument = HydratedDocument<Inventory> & WithTimestamps;
@@ -15,6 +16,13 @@ export type InventoryDocument = HydratedDocument<Inventory> & WithTimestamps;
 @Schema({ timestamps: true, versionKey: false, toJSON: { virtuals: true } })
 export class Inventory {
   id: string;
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    autopopulate: true,
+  })
+  product?: Product;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
@@ -39,7 +47,7 @@ export class Inventory {
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Location',
+    ref: 'WarehouseLocation',
     autopopulate: true,
   })
   location?: WarehouseLocation;
@@ -55,9 +63,9 @@ export class Inventory {
 
   @Prop()
   price: number;
-  
+
   @Prop()
-  isCompanyInventory?: boolean
+  isCompanyInventory?: boolean;
 }
 
 export const InventorySchema = SchemaFactory.createForClass(Inventory);

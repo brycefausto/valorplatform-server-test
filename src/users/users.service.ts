@@ -1,5 +1,7 @@
+import { UserPayload } from '@/auth/auth.dto';
 import { WEB_URL } from '@/constants';
 import { AppUser, AppUserDocument, UserRole } from '@/schemas/appuser.schema';
+import { Company, CompanyDocument } from '@/schemas/company.schema';
 import {
   deletedAccountTemplate,
   registeredAccountTemplate,
@@ -25,8 +27,6 @@ import {
   UserDto,
   UserQueryParams,
 } from './users.dto';
-import { Company, CompanyDocument } from '@/schemas/company.schema';
-import { UserPayload } from '@/auth/auth.dto';
 
 @Injectable()
 export class UsersService {
@@ -243,6 +243,13 @@ export class UsersService {
       .findOne({ email: emailRegex })
       .select('+password')
       .exec();
+  }
+
+  async count(companyId?: string) {
+    if (!companyId) {
+      return this.appUserModel.countDocuments();
+    }
+    return this.appUserModel.countDocuments({ company: companyId });
   }
 
   async findByAdminRole() {

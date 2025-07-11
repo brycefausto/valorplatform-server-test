@@ -11,7 +11,7 @@ import {
   OrderItemDocument,
   OrderItemStatus,
 } from '@/schemas/order-item.schema';
-import { Order, OrderDocument } from '@/schemas/order.schema';
+import { Order, OrderDocument, OrderStatus } from '@/schemas/order.schema';
 import {
   Payment,
   PaymentDocument,
@@ -21,7 +21,7 @@ import {
   ProductVariant,
   ProductVariantDocument,
 } from '@/schemas/product-variant.schema';
-import { toDateString } from '@/utils/date.utils';
+import { DATE_FORMAT, toDateString } from '@/utils/date.utils';
 import { receivedOrderTemplate, sendMail } from '@/utils/email.utils';
 import { computeTax } from '@/utils/pricing.utils';
 import { formatPrice } from '@/utils/string.utils';
@@ -40,6 +40,7 @@ import {
   UpdateOrderDto,
   UpdateOrderStatusDto,
 } from './orders.dto';
+import { InventoryService } from '@/inventory/inventory.service';
 
 @Injectable()
 export class OrdersService {
@@ -59,6 +60,7 @@ export class OrdersService {
     private customerModel: PaginateModel<CustomerDocument>,
     @InjectModel(BankAccount.name)
     private bankAccountModel: PaginateModel<BankAccountDocument>,
+    private inventoryService: InventoryService,
   ) {}
 
   async create(createDto: CreateOrderDto) {
@@ -90,6 +92,13 @@ export class OrdersService {
       }
     } else if (createDto.customerDto) {
       customer = await this.customerModel.create(merge(createDto.customerDto));
+    }
+
+    for (let item of createDto.items) {
+      await this.inventoryService.decreaseStock(
+        item.productVariantId,
+        item.quantity,
+      );
     }
 
     const order = await this.orderModel.create(
@@ -151,9 +160,11 @@ export class OrdersService {
         customer: customer.fullName,
         orderId: order.id,
         orderDate: toDateString(order.createdAt),
-        estimatedDeliveryDate: DateTime.fromJSDate(order.createdAt).plus({
-          days: 3,
-        }),
+        estimatedDeliveryDate: DateTime.fromJSDate(order.createdAt)
+          .plus({
+            days: 3,
+          })
+          .toFormat(DATE_FORMAT),
         subtotal: formatPrice(order.subtotal),
         shipping: formatPrice(order.shipping),
         total: formatPrice(order.total),
@@ -294,8 +305,12 @@ export class OrdersService {
     return this.orderModel.findById(id).exec();
   }
 
-  async count(companyId: string) {
-    return this.orderModel.countDocuments({ company: companyId });
+  async count(vendorId?: string) {
+    return this.orderModel.countDocuments({ vendor: vendorId });
+  }
+
+  async countPending(vendorId?: string) {
+    return this.orderModel.countDocuments({ vendor: vendorId, status: OrderStatus.PENDING });
   }
 
   async findByIdNumber(idNumber: string) {

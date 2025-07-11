@@ -1,3 +1,4 @@
+import { AuthGuard } from '@/auth/auth.guard';
 import {
   Body,
   Controller,
@@ -9,13 +10,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { InventoryService } from './inventory.service';
 import {
   CreateInventoryDto,
   InventoryQueryParams,
   UpdateInventoryDto,
 } from './inventory.dto';
-import { AuthGuard } from '@/auth/auth.guard';
+import { InventoryService } from './inventory.service';
 
 @Controller('inventory')
 export class InventoryController {
@@ -44,8 +44,8 @@ export class InventoryController {
   }
 
   @Get('count')
-  async count(@Query('companyId') companyId: string, @Query('vendorId') vendorId?: string) {
-    return this.inventoryService.count(companyId, vendorId);
+  async count(@Query('vendorId') vendorId: string) {
+    return this.inventoryService.count(vendorId);
   }
 
   @Get('countReport')

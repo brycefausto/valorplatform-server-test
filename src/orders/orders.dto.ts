@@ -37,7 +37,6 @@ export class CreateOrderDto {
   customerId?: string;
   customerDto?: CreateCustomerDto;
   payment: CreatePaymentDto;
-  status: OrderStatus;
   subtotal: number;
   shipping: number;
   total: number;

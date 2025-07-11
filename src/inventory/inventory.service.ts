@@ -16,7 +16,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { merge, omit } from 'lodash';
-import { ObjectId, PaginateModel } from 'mongoose';
+import { PaginateModel } from 'mongoose';
 import {
   CreateInventoryDto,
   InventoryDto,
@@ -170,9 +170,7 @@ export class InventoryService {
           inventory.vendor = emptyUser;
         }
 
-        const productId = inventory.variant?.product as any as
-          | ObjectId
-          | undefined;
+        const productId = inventory.variant?.productId;
         let product: Product | undefined | null;
 
         if (productId) {
@@ -203,14 +201,15 @@ export class InventoryService {
       .exec();
   }
 
-  async count(companyId: string, vendorId?: string) {
-    const countQuery: any = { company: companyId }
-    if (vendorId) {
-      countQuery.vendorId = vendorId;
-    } else {
-      countQuery.isCompanyInventory
-    }
-    return this.inventoryModel.countDocuments(countQuery);
+  async count(vendorId: string) {
+    return this.inventoryModel.countDocuments({ vendor: vendorId });
+  }
+
+  async countLowStock(vendorId: string) {
+    return this.inventoryModel.countDocuments({
+      vendor: vendorId,
+      $expr: { $lte: ['$stock', '$minStock'] },
+    });
   }
 
   async countReport() {
@@ -237,7 +236,7 @@ export class InventoryService {
     }
 
     const product = await this.productModel.findById(
-      inventory?.variant?.product,
+      inventory?.variant?.productId,
     );
 
     if (!product) {

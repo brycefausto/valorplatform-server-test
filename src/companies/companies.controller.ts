@@ -22,12 +22,12 @@ export class CompaniesController {
 
   @Post()
   async create(@Body() createDto: CreateCompanyDto) {
-    await this.companiesService.create(createDto);
+    return await this.companiesService.create(createDto);
   }
 
   @Put(':id')
   async update(@Param('id') id: string, @Body() updateDto: UpdateCompanyDto) {
-    await this.companiesService.update(id, updateDto);
+    return await this.companiesService.update(id, updateDto);
   }
 
   @Put(':id/updateLogo')

@@ -1,4 +1,6 @@
+import { UserPayload } from '@/auth/auth.dto';
 import { AppUser, AppUserDocument } from '@/schemas/appuser.schema';
+import { Company, CompanyDocument } from '@/schemas/company.schema';
 import { Inventory, InventoryDocument } from '@/schemas/inventory.schema';
 import {
   ProductVariant,
@@ -22,8 +24,6 @@ import {
   UpdateProductImageDto,
   ViewProductDto,
 } from './product.dto';
-import { UserPayload } from '@/auth/auth.dto';
-import { Company, CompanyDocument } from '@/schemas/company.schema';
 
 @Injectable()
 export class ProductsService {
@@ -38,7 +38,6 @@ export class ProductsService {
     private companyModel: PaginateModel<CompanyDocument>,
     @InjectModel(Inventory.name)
     private inventoryModel: PaginateModel<InventoryDocument>,
-    
   ) {}
 
   async create(createDto: CreateProductDto, user: UserPayload) {
@@ -55,7 +54,8 @@ export class ProductsService {
       }
     }
 
-    let company = user.company ?? await this.companyModel.findById(createDto.companyId);
+    let company =
+      user.company ?? (await this.companyModel.findById(createDto.companyId));
 
     if (!company) {
       throw new NotFoundException('Company not found.');
@@ -72,12 +72,16 @@ export class ProductsService {
     try {
       for (let [i, variantDto] of createDto.variants.entries()) {
         const variant = await this.productVariantModel.create(
-          merge(omit(variantDto, 'stock'), { product, sequence: i }),
+          merge(omit(variantDto, 'stock'), {
+            productId: product.id,
+            sequence: i,
+          }),
         );
         variant.stock = variantDto.stock;
         variant.minStock = variantDto.minStock;
         variant.maxStock = variantDto.maxStock;
         await this.inventoryModel.create({
+          product: product.id,
           variant: variant.id,
           vendor: user.id,
           company: company,
@@ -96,6 +100,7 @@ export class ProductsService {
 
     product.defaultVariant = variants[0];
     product.price = variants[0].price;
+    product.variants = variants;
 
     return new ProductDto(await product.save(), variants);
   }
@@ -180,6 +185,7 @@ export class ProductsService {
 
     product.defaultVariant = updatedVariants[0];
     product.price = updatedVariants[0].price;
+    product.variants = updatedVariants;
 
     const newProduct = await product.save();
 
@@ -257,10 +263,12 @@ export class ProductsService {
       .limit(10)
       .exec();
 
-    const productDtos = await Promise.all(products.map(async (product) => {
-      const variants = await this.productVariantModel.find({ product })
-      return new ProductDto(product, variants);
-    }))
+    const productDtos = await Promise.all(
+      products.map(async (product) => {
+        const variants = await this.productVariantModel.find({ product });
+        return new ProductDto(product, variants);
+      }),
+    );
 
     return productDtos;
   }
@@ -272,13 +280,13 @@ export class ProductsService {
       throw new NotFoundException('Product not found.');
     }
 
-    const variants = await this.productVariantModel.find({ product });
+    const variants = await this.productVariantModel.find({ productId: id });
     const variantIds = variants.map((it) => it.id);
     const inventoriesQuery: any = {
       variant: { $in: variantIds },
-    }
+    };
     if (vendorId) {
-      inventoriesQuery.vendor = vendorId
+      inventoriesQuery.vendor = vendorId;
     }
     const inventories = await this.inventoryModel.find(inventoriesQuery);
 

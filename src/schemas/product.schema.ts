@@ -29,8 +29,17 @@ export class Product {
   @Prop()
   image: string;
 
+  @Prop([String])
+  images?: string[];
+
   @Prop()
   price: number;
+
+  @Prop({ default: 0 })
+  originalPrice: number;
+
+  @Prop()
+  isSale?: boolean
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
@@ -45,6 +54,20 @@ export class Product {
     autopopulate: true,
   })
   defaultVariant?: ProductVariant;
+
+  @Prop({
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ProductVariant',
+        autopopulate: true,
+      },
+    ],
+  })
+  variants: ProductVariant[];
+
+  @Prop({ default: 5 })
+  rating: number;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
