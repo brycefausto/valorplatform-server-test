@@ -68,3 +68,11 @@ export class OrderQueryParams {
   dateTo?: string;
   search?: string;
 }
+
+export class OrderCountReport {
+  pendingCount: number;
+  shippedCount: number;
+  deliveredCount: number;
+  cancelledCount: number;
+  refundedCount: number;
+}

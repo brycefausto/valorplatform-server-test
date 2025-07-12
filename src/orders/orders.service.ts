@@ -36,6 +36,7 @@ import { DateTime } from 'luxon';
 import { PaginateModel } from 'mongoose';
 import {
   CreateOrderDto,
+  OrderCountReport,
   OrderQueryParams,
   UpdateOrderDto,
   UpdateOrderStatusDto,
@@ -111,7 +112,7 @@ export class OrdersService {
           'items',
           'payment',
         ),
-        { customer, company, tax: computeTax(createDto.subtotal) },
+        { customer, company, vendor, tax: computeTax(createDto.subtotal) },
       ),
     );
 
@@ -310,7 +311,45 @@ export class OrdersService {
   }
 
   async countPending(vendorId?: string) {
-    return this.orderModel.countDocuments({ vendor: vendorId, status: OrderStatus.PENDING });
+    return this.orderModel.countDocuments({
+      vendor: vendorId,
+      status: OrderStatus.PENDING,
+    });
+  }
+
+  async countReport(vendorId: string) {
+    const pendingCount = await this.orderModel.countDocuments({
+      vendor: vendorId,
+      status: OrderStatus.PENDING,
+    });
+
+    const shippedCount = await this.orderModel.countDocuments({
+      vendor: vendorId,
+      status: OrderStatus.SHIPPED,
+    });
+
+    const deliveredCount = await this.orderModel.countDocuments({
+      vendor: vendorId,
+      status: OrderStatus.DELIVERED,
+    });
+
+    const cancelledCount = await this.orderModel.countDocuments({
+      vendor: vendorId,
+      status: OrderStatus.CANCELLED,
+    });
+
+    const refundedCount = await this.orderModel.countDocuments({
+      vendor: vendorId,
+      status: OrderStatus.REFUNDED,
+    });
+
+    return {
+      pendingCount,
+      shippedCount,
+      deliveredCount,
+      cancelledCount,
+      refundedCount
+    } as OrderCountReport;
   }
 
   async findByIdNumber(idNumber: string) {
