@@ -293,8 +293,9 @@ export class ProductsService {
     return new ViewProductDto(product, variants, inventories);
   }
 
-  async count(companyId: string) {
-    return this.productModel.countDocuments({ company: companyId });
+  async count(companyId?: string) {
+    const query = companyId ? { company: companyId } : {}
+    return this.productModel.countDocuments(query);
   }
 
   async delete(id: string) {

@@ -236,7 +236,9 @@ export class OrdersService {
     }
 
     order.status = updateDto.status;
-    order.trackingId = updateDto.trackingId;
+    if (updateDto.trackingId) {
+      order.trackingId = updateDto.trackingId;
+    }
 
     const orderItems: OrderItem[] = [];
     const orderItemStatus = updateDto.status as unknown as OrderItemStatus;
@@ -255,7 +257,7 @@ export class OrdersService {
 
     order.items = orderItems;
 
-    if (order.payment) {
+    if (order.payment && updateDto.paymentStatus) {
       await this.paymentModel.findByIdAndUpdate(order.payment, {
         status: updateDto.paymentStatus,
       });

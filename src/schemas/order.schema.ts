@@ -96,6 +96,12 @@ export class Order {
 
   @Prop({ default: '' })
   trackingId: string;
+
+  @Prop()
+  shippedAt?: Date;
+
+  @Prop()
+  lastStatusUpdatedAt?: Date;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

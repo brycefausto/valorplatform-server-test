@@ -73,7 +73,7 @@ export class ProductsController {
   }
 
   @Get('count')
-  async count(@Query('companyId') companyId: string) {
+  async count(@Query('companyId') companyId?: string) {
     return this.productsService.count(companyId);
   }
 

@@ -3,13 +3,16 @@ import { ProductsService } from '@/products/products.service';
 import { AppUser, AppUserDocument } from '@/schemas/appuser.schema';
 import { Company, CompanyDocument } from '@/schemas/company.schema';
 import { Inventory, InventoryDocument } from '@/schemas/inventory.schema';
+import {
+  WarehouseLocation,
+  WarehouseLocationDocument,
+} from '@/schemas/warehouse-location.schema';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { createCompanyData } from './company.seed';
 import { createProductsData } from './product.seed';
 import { createSuperAdminData, createUserData } from './users.seed';
-import { WarehouseLocation, WarehouseLocationDocument } from '@/schemas/warehouse-location.schema';
 
 @Injectable()
 export class SeedService implements OnModuleInit {
@@ -26,13 +29,14 @@ export class SeedService implements OnModuleInit {
   async onModuleInit() {
     await createSuperAdminData(this.appUserModel);
     if (ENV !== 'production') {
-      const company = await createCompanyData(this.companyModel, this.locationModel);
-      await createUserData(this.appUserModel, company);
-      await createProductsData(
-        this.productsService,
-        this.appUserModel,
-        company,
+      const company = await createCompanyData(
+        this.companyModel,
+        this.locationModel,
       );
+      const users = await createUserData(this.appUserModel, company);
+      if (users && users.length) {
+        await createProductsData(this.productsService, users[0], company);
+      }
       await this.migrateItems();
     }
   }

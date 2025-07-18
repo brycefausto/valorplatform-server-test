@@ -75,5 +75,7 @@ export const createUserData = async (
 
     company.vendorId = createdUsers[0].id;
     await company.save()
+
+    return createdUsers
   }
 };

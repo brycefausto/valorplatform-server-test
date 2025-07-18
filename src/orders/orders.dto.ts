@@ -57,8 +57,8 @@ export class UpdateOrderDto {
 
 export class UpdateOrderStatusDto {
   status: OrderStatus;
-  paymentStatus: PaymentStatus;
-  trackingId: string;
+  paymentStatus?: PaymentStatus;
+  trackingId?: string;
 }
 
 export class OrderQueryParams {

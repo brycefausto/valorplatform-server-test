@@ -1,16 +1,14 @@
 import { CreateProductDto } from '@/products/product.dto';
 import { ProductsService } from '@/products/products.service';
-import { AppUserDocument, UserRole } from '@/schemas/appuser.schema';
+import { AppUser } from '@/schemas/appuser.schema';
 import { Company } from '@/schemas/company.schema';
-import { Model } from 'mongoose';
 
 export const createProductsData = async (
   productsService: ProductsService,
-  appUserModel: Model<AppUserDocument>,
+  user: AppUser,
   company: Company,
 ) => {
-  const user = await appUserModel.findOne({ role: UserRole.ADMIN });
-  const count = await productsService.count(user?.company?.id || "");
+  const count = await productsService.count(user.company?.id || '');
 
   if (user && count == 0) {
     const createProductDtos: CreateProductDto[] = [
